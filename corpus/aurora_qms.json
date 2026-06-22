@@ -1,0 +1,15 @@
+{
+  "corpus_id": "aurora-qms-v0",
+  "note": "Synthetic, IP-clean. A fictional 'Aurora' quality-management document set (quality manual + SOPs) in the genre of regulated GxP documentation. No real company data — the method is the point, not the data. Spans are deliberately written so a naive lexical/embedding match surfaces on-topic-but-unanswering text for several abstain cases (adversarial by construction).",
+  "spans": [
+    {"span_id": "QM-1", "source": "Aurora Quality Manual", "text": "All controlled documents are version-controlled. A document is effective only after the Quality Unit approves it and assigns an effective date."},
+    {"span_id": "QM-2", "source": "Aurora Quality Manual", "text": "Any change to a specification, procedure, or master record requires a change-control record reviewed and approved by the Quality Unit before the change takes effect."},
+    {"span_id": "QM-3", "source": "Aurora Quality Manual", "text": "Executed batch records are retained for seven years from the date of product release."},
+    {"span_id": "QM-4", "source": "Aurora Quality Manual", "text": "A deviation from an approved procedure must be documented in the deviation system within 24 hours of discovery."},
+    {"span_id": "QM-5", "source": "Aurora Quality Manual", "text": "Suppliers of materials that affect product quality must be qualified before use and re-qualified on a defined interval."},
+    {"span_id": "SOP-CAL-1", "source": "SOP Calibration", "text": "Analytical balances are calibrated at an interval not to exceed six months by a qualified calibration provider."},
+    {"span_id": "SOP-CAL-2", "source": "SOP Calibration", "text": "If an instrument is found out of tolerance, an investigation is opened to assess impact on results generated since the last passing calibration."},
+    {"span_id": "SOP-TRN-1", "source": "SOP Training", "text": "Personnel are trained on a procedure before performing it, and training is documented in the training record before the task is performed."},
+    {"span_id": "SOP-SHR-1", "source": "SOP Document Sharing", "text": "Controlled documents may be shared with an external auditor through a read-only share link issued by the Quality Unit."}
+  ]
+}

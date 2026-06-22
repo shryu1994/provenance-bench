@@ -1,0 +1,73 @@
+# cite-or-abstain
+
+**A faithfulness + justified-abstention benchmark for regulated documentation.**
+A correct *"I don't know"* is scored as a first-class **pass** — and credited only when the
+system abstains *for the right reason*.
+
+> Status: **v0, work in progress.** This is the scaffold + design ([SPEC.md](SPEC.md)) and a
+> seed evalset. The corpus and case set are small on purpose; expansion and a first honest run
+> on public models come next ([SPEC §8](SPEC.md#8-build-sequence)).
+
+## Why
+
+In regulated work — the kind of documentation where a confident wrong answer is a compliance
+event, not a demo bug — refusing when the documents don't support an answer is the *correct*,
+*required* behaviour. But the default RAG metric punishes it: RAGAS `faithfulness` returns
+`NaN`, not a pass, for a correct refusal — *by design*
+([issue #794](https://github.com/explodinggradients/ragas/issues/794): *"This is intentional …
+therefore it's NaN"*).
+
+Refusal/abstention benchmarks now exist — [AbstentionBench](https://github.com/facebookresearch/AbstentionBench)
+(abstention scored as correct), [UAEval4RAG](https://arxiv.org/abs/2412.12300) (six unanswerable
+categories), [RefusalBench](https://arxiv.org/abs/2510.10390) (frontier models below 50% refusal
+accuracy on multi-doc) — and citation evaluation is mature ([ALCE](https://github.com/princeton-nlp/ALCE)).
+But the only *regulated* RAG benchmark, [RIRAG/ObliQA](https://arxiv.org/abs/2409.05677), doesn't
+score abstention as a pass, and no public benchmark pairs **regulated documents** with
+**answer-with-citation OR justified-abstention, both first-class, jointly scored, per item.**
+
+That combination is the gap cite-or-abstain fills. **This is not "the first refusal benchmark"** —
+it stands on the ones above and cites them.
+
+## The task
+
+Given a corpus of regulated-style documents and a question, a system returns one shape:
+
+- **`answer`** — every claim cites a real source span that actually supports it.
+- **`abstain`** — the corpus doesn't support an answer (or the request is unanswerable for a
+  specific reason). Says so. **Scored as a pass — if it abstains for the right reason.**
+- **`out_of_scope`** — not this assistant's job.
+
+The abstain **reason** comes from a published taxonomy ([UAEval4RAG](https://arxiv.org/abs/2412.12300)
+Table 6, cross-walked to AbstentionBench and RefusalBench in [`coa/taxonomy.py`](coa/taxonomy.py)),
+so every gold label is traceable to peer-reviewed work.
+
+## Scoring (see [SPEC §4](SPEC.md#4-scoring-rubric))
+
+1. **Deterministic** (offline, no key): citation coverage, grounding (no phantom citations),
+   right shape — and an abstain that smuggles in a claim **fails**.
+2. **Faithfulness** (optional LLM-as-Judge): does the cited span actually support the claim?
+3. **Abstention as a pass**: did it abstain when it should, and *for the right reason*?
+   Error axes from [Trust-Align](https://arxiv.org/abs/2409.11242): Inaccurate Answer ·
+   Over-Responsiveness · Excessive Refusal · Overcitation · Improper Citation.
+
+For every correct refusal, the report shows RAGAS `faithfulness → NaN` next to cite-or-abstain
+`→ pass`. That contrast is the point.
+
+## Run
+
+```bash
+pip install -e ".[dev]"
+pytest            # validates the seed evalset is internally sound (every gold label traceable)
+```
+
+The benchmark eats its own dog food: a gold citation that points nowhere, or an abstain case
+with no real reason category, fails at load time. A benchmark about unsupported claims won't
+ship unsupported gold labels.
+
+## Lineage
+
+The response contract and deterministic checks are generalized from
+[cite-or-refuse](https://github.com/shryu1994/cite-or-refuse) — a grounded RAG that refuses
+instead of guessing — turning its single toy eval into a structured, named benchmark.
+
+Synthetic data only. The method is the point, not the data. MIT licensed.

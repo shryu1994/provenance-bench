@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cite-or-abstain"
+version = "0.0.1"
+description = "A faithfulness + justified-abstention benchmark for regulated documentation — a correct refusal is a first-class pass."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = ["rag", "evaluation", "abstention", "refusal", "faithfulness", "benchmark", "regulated"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["coa"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
