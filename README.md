@@ -111,6 +111,61 @@ python3 scripts/run_llm.py             # runs a real LLM via the Claude Code sub
 The benchmark eats its own dog food: a gold citation that points nowhere, or an abstain case with no real
 reason category, fails at load time. A benchmark about unsupported claims won't ship unsupported gold labels.
 
+## Evaluate your own system
+
+The benchmark runs *any* system, not just the bundled baselines. A "system" is just a function from a
+question to an answer plus the spans your retriever actually returned:
+
+```python
+from provbench.types import Answer, Claim, ResponseKind
+from provbench.data import load_cases
+from provbench.runner import run, render
+
+def my_system(question: str):
+    answer_text, sources = my_rag(question)       # <- your real RAG / agent
+    if answer_text is None:                        # your system judged the docs don't support an answer
+        return Answer(ResponseKind.ABSTAIN, abstain_category="out_of_database",
+                      message="not in the documents"), sources
+    return Answer(
+        ResponseKind.ANSWER,
+        claims=(Claim(text=answer_text, span_ids=tuple(s.span_id for s in sources)),),
+    ), sources
+
+cases, _ = load_cases("seed.json")
+print(render(run("my system", my_system, cases)))
+```
+
+`abstain_category` is one of `out_of_database`, `underspecified`, `false_presupposition`,
+`nonsensical`, `modality_limited`, `safety_concerned` ([`taxonomy.py`](provbench/taxonomy.py)).
+Returning the spans your retriever *actually* provided is what lets the grounding check catch a citation
+to a span that was never retrievable — a phantom citation.
+
+### …on your own documents
+
+Drop two JSON files in and point `load_cases` at them:
+
+```jsonc
+// corpus/mine.json — your documents, split into citable spans
+{ "spans": [
+  { "span_id": "D1", "source": "my-policy.md", "text": "Records are retained for 7 years." }
+] }
+
+// evalset/mine.json — questions with gold labels: answerable, or must-abstain (and why)
+{ "evalset_id": "mine", "corpus": "mine.json", "cases": [
+  { "case_id": "A1", "question": "How long are records retained?",
+    "expected_kind": "answer", "gold_span_ids": ["D1"] },
+  { "case_id": "X1", "question": "What is the training-record retention period?",
+    "expected_kind": "abstain", "gold_category": "out_of_database" }
+] }
+```
+
+```python
+cases, spans = load_cases("mine.json")   # validated at load: a gold citation to nowhere fails here
+```
+
+The labels are the work, not the wiring — deciding which questions are answerable, and for the rest,
+*why* not. That judgement is the benchmark.
+
 ## Lineage
 
 The response contract and deterministic checks are generalized from
