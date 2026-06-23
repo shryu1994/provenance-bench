@@ -22,13 +22,18 @@ therefore it's NaN"*).
 Refusal/abstention benchmarks now exist — [AbstentionBench](https://github.com/facebookresearch/AbstentionBench)
 (abstention scored as correct), [UAEval4RAG](https://arxiv.org/abs/2412.12300) (six unanswerable
 categories), [RefusalBench](https://arxiv.org/abs/2510.10390) (frontier models below 50% refusal
-accuracy on multi-doc) — and citation evaluation is mature ([ALCE](https://github.com/princeton-nlp/ALCE)).
-But the only *regulated* RAG benchmark, [RIRAG/ObliQA](https://arxiv.org/abs/2409.05677), doesn't
-score abstention as a pass, and no public benchmark pairs **regulated documents** with
-**answer-with-citation OR justified-abstention, both first-class, jointly scored, per item.**
+accuracy on multi-doc) — citation evaluation is mature ([ALCE](https://github.com/princeton-nlp/ALCE)),
+and scoring refusal *alongside* citations per item isn't new either
+([CReSt](https://arxiv.org/abs/2505.17503), [Trust-Align](https://arxiv.org/abs/2409.11242)).
+Regulated-domain RAG benchmarks exist too, but focus elsewhere:
+[RIRAG/ObliQA](https://arxiv.org/abs/2409.05677) scores obligation coverage,
+[LegalBench-RAG](https://arxiv.org/abs/2408.10343) scores retrieval — neither credits a justified
+abstention as a first-class pass.
 
-That combination is the gap ProvenanceBench fills. **This is not "the first refusal benchmark"** —
-it stands on the ones above and cites them.
+What I haven't found is this specific slice: a **regulated** corpus where a justified abstention is
+a first-class **pass** *and* is credited only for the **right reason** (a taxonomy-matched one). That
+is the gap ProvenanceBench targets — an open, as-far-as-I've-found gap, not a proven one.
+**This is not "the first refusal benchmark"** — it stands on the ones above and cites them.
 
 ## The task
 

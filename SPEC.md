@@ -39,19 +39,25 @@ Three things are true at once in mid-2026:
      frontier models score **below 50% refusal accuracy on multi-document tasks** (best
      DeepSeek-R1 47.4%; Claude-4-Sonnet 73.0% single-doc → 36.1% multi-doc), and that scale and
      extended reasoning *don't* fix it. Refusal = *detection* (when) + *categorization* (why). `[verified]`
-   - **RIRAG / ObliQA** ([arXiv 2409.05677](https://arxiv.org/abs/2409.05677)) is the lone
-     *regulated* benchmark (27,869 ADGM financial-regulation questions, RePASs metric) — but it
-     measures obligation coverage + contradiction avoidance, **not abstention-as-pass**. `[verified]`
+   - Regulated-domain RAG benchmarks exist but focus elsewhere:
+     **RIRAG / ObliQA** ([arXiv 2409.05677](https://arxiv.org/abs/2409.05677), 27,869 ADGM
+     financial-regulation questions, RePASs) measures obligation coverage + contradiction
+     avoidance; **LegalBench-RAG** ([arXiv 2408.10343](https://arxiv.org/abs/2408.10343)) measures
+     legal-domain *retrieval*. Neither credits justified abstention as a first-class pass. `[verified]`
 
-3. **Citation/faithfulness evaluation is mature but separate from abstention.** ALCE
+3. **Citation/faithfulness evaluation is mature, and so is scoring refusal alongside it — but not
+   on regulated docs with a reason taxonomy.** ALCE
    ([arXiv 2305.14627](https://github.com/princeton-nlp/ALCE)) scores citation quality
-   (NLI-based) over ASQA/QAMPARI/ELI5; Trust-Align/TRUST-SCORE
+   (NLI-based); Trust-Align/TRUST-SCORE
    ([arXiv 2409.11242](https://arxiv.org/abs/2409.11242), ICLR 2025) names five grounding-failure
-   types. Neither treats *justified refusal* as a first-class scored outcome. `[verified]`
+   types; and **CReSt** ([arXiv 2505.17503](https://arxiv.org/abs/2505.17503), Upstage) already
+   evaluates appropriate refusal *and* precise citation jointly, per item — but over general
+   structured documents, and without crediting a taxonomy-matched *reason* for the refusal. `[verified]`
 
-**The open gap** (labelled *likely/open* — it is an absence-of-evidence claim, not provable by
-search): no public benchmark pairs **(regulated documentation)** × **(answer-with-citation OR
-justified-abstention, both first-class, jointly scored, per item)**.
+**The open gap** (labelled *likely/open* — an absence-of-evidence claim, not provable by search,
+and narrowed after finding CReSt): no public benchmark pairs **(regulated documentation)** ×
+**(answer-with-citation OR justified-abstention, both first-class, jointly scored per item, and
+credited only for the *right (taxonomy-matched) reason*)**.
 
 > ProvenanceBench = AbstentionBench's *abstention-as-pass* scoring **+** ALCE's *per-claim citation* scoring,
 > applied **jointly, per item, on a regulated corpus**, with credit for **refusing for the right
@@ -83,7 +89,8 @@ instead of a vibe. (Lineage: this is the `cite-or-refuse` contract — `Response
 
 We adopt **UAEval4RAG's six categories** (RAG-native, Table 6 canonical forms) as the abstain
 taxonomy, because they map cleanly onto regulated work. Each item labelled `abstain` carries one
-gold category. Definitions are quoted from UAEval4RAG Table 6 (ACL 2025, p.8463) `[verified]`:
+gold category. Definitions are condensed from UAEval4RAG (ACL 2025), Table 6; the difficulty
+labels come from its §3.1 category headings (e.g. "Underspecified Requests (Hard)"). `[verified]`:
 
 | ProvenanceBench category | UAEval4RAG def (Table 6, condensed) | difficulty | regulated example |
 |---|---|---|---|
@@ -151,9 +158,9 @@ point. Each source is chunked into spans with stable ids so citations and gold l
 The corpus is deliberately built so that, for each abstain category, there exist on-topic spans
 that a naive lexical/embedding match will surface — i.e. the corpus is *adversarial by
 construction* (mirrors the `cite-or-refuse` finding where "share a folder" lexically matched
-"password-protect a share link", which the system must learn to refuse). v0 seed corpus +
-~2 dozen cases ship first; expansion (and per-case label verification) is a separate generation
-pass (§8).
+"password-protect a share link", which the system must learn to refuse). v0 ships a 9-span
+corpus + 45 cases (12 answer / 28 abstain / 5 out-of-scope), each gold label adversarially
+verified against the corpus; further expansion is a separate generation pass (§8).
 
 ---
 
@@ -199,14 +206,15 @@ vendor-neutral.
 
 ## 8. Build sequence
 
-1. **[this pass]** SPEC + README + `types.py`/`taxonomy.py`/`checks.py` + seed corpus + ~2 dozen
-   seed cases + pyproject/LICENSE. Inspectable, partially runnable.
-2. Tier-3 `score.py` + `runner.py` + a `cite-or-refuse` baseline adapter → first real run on the seed.
-3. **Corpus + case expansion** via a generate→adversarially-verify pass (each generated case
-   independently checked: is it really unanswerable for the stated category? does the corpus
-   really not answer it?). Mislabeled cases are brand-fatal, so verification is mandatory.
-4. Tier-2 judge wiring + the RAGAS-NaN side-by-side table.
-5. Honest report on 2–3 public models → launch devlog (points back here as source-of-truth).
+**Shipped (v0.1):** SPEC + README + the kernel (`types`/`taxonomy`/`checks`/`data`) + a 9-span
+corpus + 45 adversarially-verified cases; Tier-1+Tier-3 `score.py`/`runner.py`; two baselines
+(naive, grounded) plus a real LLM baseline run on a subscription via `claude -p` (no API key); a
+Tier-2 faithfulness judge; the RAGAS-NaN side-by-side; reports for every run. Cases were expanded
+via a generate→adversarially-verify pass (each gold label independently re-checked against the
+corpus; mislabeled cases are brand-fatal, so verification is mandatory).
+
+**Next:** broaden the corpus + cases; run more public models; keep the launch devlog and any
+public claims pinned to the reports in this repo.
 
 ## 9. Name — ProvenanceBench (decided 2026-06-23)
 
