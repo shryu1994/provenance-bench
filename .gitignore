@@ -10,3 +10,7 @@ dist/
 venv/
 .env
 .DS_Store
+
+# transient run logs
+reports/.full_run.log
+reports/*.log
