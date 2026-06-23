@@ -1,5 +1,5 @@
 {
-  "evalset_id": "cite-or-abstain-seed-v0",
+  "evalset_id": "provenance-bench-seed-v0",
   "corpus": "aurora_qms.json",
   "note": "v0 seed: answerable cases (must cite a real span) + at least one case per abstain category + out-of-scope. Several abstain cases are adversarial by construction — an on-topic span lexically matches but does not answer, so a naive system over-answers. Expansion + per-case label verification is a separate pass (SPEC §8.3).",
   "cases": [

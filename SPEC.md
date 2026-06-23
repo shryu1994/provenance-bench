@@ -1,7 +1,7 @@
-# cite-or-abstain — benchmark specification (v0 draft)
+# ProvenanceBench — benchmark specification (v0 draft)
 
-> **Status:** design draft, 2026-06-23. Working name `cite-or-abstain` (CoA) — see §9 for
-> name options; easy to rename before first public push.
+> **Status:** design draft, 2026-06-23. Name **ProvenanceBench** decided 2026-06-23 (see §9 for the rationale).
+> Package `provbench`, repo `provenance-bench`.
 > **One line:** a faithfulness **+ justified-abstention** benchmark for **regulated
 > documentation**, where a correct *"I don't know"* is scored as a first-class **pass** — and
 > credited only when the system abstains *for the right reason*.
@@ -53,7 +53,7 @@ Three things are true at once in mid-2026:
 search): no public benchmark pairs **(regulated documentation)** × **(answer-with-citation OR
 justified-abstention, both first-class, jointly scored, per item)**.
 
-> CoA = AbstentionBench's *abstention-as-pass* scoring **+** ALCE's *per-claim citation* scoring,
+> ProvenanceBench = AbstentionBench's *abstention-as-pass* scoring **+** ALCE's *per-claim citation* scoring,
 > applied **jointly, per item, on a regulated corpus**, with credit for **refusing for the right
 > reason** (UAEval4RAG/RefusalBench category match). That specific combination is the contribution.
 
@@ -85,7 +85,7 @@ We adopt **UAEval4RAG's six categories** (RAG-native, Table 6 canonical forms) a
 taxonomy, because they map cleanly onto regulated work. Each item labelled `abstain` carries one
 gold category. Definitions are quoted from UAEval4RAG Table 6 (ACL 2025, p.8463) `[verified]`:
 
-| CoA category | UAEval4RAG def (Table 6, condensed) | difficulty | regulated example |
+| ProvenanceBench category | UAEval4RAG def (Table 6, condensed) | difficulty | regulated example |
 |---|---|---|---|
 | **Out-of-Database** | "relevant to the given knowledge database but lack an answer within the knowledge base" | Easy | a control the SOP set simply doesn't document |
 | **Underspecified** | "miss crucial information required to appropriately respond" | Hard | "what's the limit?" — which product / spec / batch? |
@@ -100,7 +100,7 @@ gold category. Definitions are quoted from UAEval4RAG Table 6 (ACL 2025, p.8463)
 - RefusalBench perturbation classes — P-Ambiguity, P-Contradiction, P-MissingInfo,
   P-FalsePremise, P-GranularityMismatch, P-EpistemicMismatch `[verified]`.
 
-The cross-walk table lives in `coa/taxonomy.py` so every gold label is traceable to a published
+The cross-walk table lives in `provbench/taxonomy.py` so every gold label is traceable to a published
 category. **Out-of-Database is the load-bearing regulated case** — "the documents are on-topic
 but simply don't answer this" is the exact situation where a confident wrong answer becomes a
 compliance event.
@@ -137,7 +137,7 @@ These separate *content* hallucination from *citation* hallucination and from ov
 full breakdown, never just `s`.
 
 **The motivating contrast, made concrete:** for every gold-`abstain` item where a correct refusal
-occurs, we show RAGAS `faithfulness` → `NaN` vs CoA → **pass**. That side-by-side *is* the "why a
+occurs, we show RAGAS `faithfulness` → `NaN` vs ProvenanceBench → **pass**. That side-by-side *is* the "why a
 new benchmark" argument (§1.1).
 
 ---
@@ -160,10 +160,10 @@ pass (§8).
 ## 6. What ships (repo layout)
 
 ```
-cite-or-abstain/
+provenance-bench/
   SPEC.md                 ← this file (source of truth)
   README.md               ← 60-second recruiter-gradeable face
-  coa/
+  provbench/
     types.py              ← ResponseKind {answer, abstain, out_of_scope}, Span, Claim, Answer
     taxonomy.py           ← the 6 categories + defs + cross-walk to AbstentionBench/RefusalBench
     checks.py             ← Tier-1 deterministic checks (from cite-or-refuse)
@@ -208,16 +208,24 @@ vendor-neutral.
 4. Tier-2 judge wiring + the RAGAS-NaN side-by-side table.
 5. Honest report on 2–3 public models → launch devlog (points back here as source-of-truth).
 
-## 9. Name (decide before first public push)
+## 9. Name — ProvenanceBench (decided 2026-06-23)
 
-Working name **`cite-or-abstain`** — sibling to the `cite-or-refuse` *system* (brand-coherent),
-collision-free (≠ OR-Bench / RefusalBench / AbstentionBench / UAEval4RAG / ObliQA). Risk: maybe
-*too* close to cite-or-refuse (recruiters could read them as one project). Alternatives to weigh:
-- **ProvenanceBench** — ties to the Provenance design system; "every answer is sourced or refused."
-- **AbstainOrCite-Reg** / **RegCiteBench** — foregrounds the *regulated* axis (the real wedge).
+Chosen for **legibility**, not search SEO (reach comes from a sharp artifact + borrowed
+distribution + HN, not the name). Rationale:
+- **`-Bench` is the field's recognition convention** (RefusalBench, AbstentionBench, OR-Bench,
+  RAGBench) — a recruiter/researcher pattern-matches it as a gradeable benchmark in seconds. A
+  bare verb phrase (the rejected working name `cite-or-abstain`) reads as a *tool*, not a benchmark.
+- **"Provenance" is the regulated-wedge term** (data lineage / "trace where this answer came
+  from") and is the same word as the **Provenance design system** already on sh-ryu.com — so the
+  site's visual identity, this flagship, and the thesis all share one word (recall + cohesion).
+- **Distinct from `cite-or-refuse`** (the *system*), avoiding the "are these the same project?"
+  dilution an earlier audit flagged. Clean framing: cite-or-refuse is a system; ProvenanceBench
+  is the measurement standard it must pass.
+- Collision-checked 2026-06-23: no existing benchmark named "ProvenanceBench" (≠ OR-Bench /
+  RefusalBench / AbstentionBench / UAEval4RAG / ObliQA / RAGBench).
 
-Recommendation: ship as `cite-or-abstain` unless the founder wants more distance from
-cite-or-refuse, in which case **ProvenanceBench**.
+The name foregrounds citation/provenance; the **abstention** half rides in the tagline:
+*"ProvenanceBench — cite a real source, or justifiably abstain. On regulated docs."*
 
 ---
 

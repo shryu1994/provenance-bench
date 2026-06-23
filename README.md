@@ -1,4 +1,6 @@
-# cite-or-abstain
+# ProvenanceBench
+
+*Cite a real source, or justifiably abstain. On regulated docs.*
 
 **A faithfulness + justified-abstention benchmark for regulated documentation.**
 A correct *"I don't know"* is scored as a first-class **pass** — and credited only when the
@@ -25,7 +27,7 @@ But the only *regulated* RAG benchmark, [RIRAG/ObliQA](https://arxiv.org/abs/240
 score abstention as a pass, and no public benchmark pairs **regulated documents** with
 **answer-with-citation OR justified-abstention, both first-class, jointly scored, per item.**
 
-That combination is the gap cite-or-abstain fills. **This is not "the first refusal benchmark"** —
+That combination is the gap ProvenanceBench fills. **This is not "the first refusal benchmark"** —
 it stands on the ones above and cites them.
 
 ## The task
@@ -38,7 +40,7 @@ Given a corpus of regulated-style documents and a question, a system returns one
 - **`out_of_scope`** — not this assistant's job.
 
 The abstain **reason** comes from a published taxonomy ([UAEval4RAG](https://arxiv.org/abs/2412.12300)
-Table 6, cross-walked to AbstentionBench and RefusalBench in [`coa/taxonomy.py`](coa/taxonomy.py)),
+Table 6, cross-walked to AbstentionBench and RefusalBench in [`provbench/taxonomy.py`](provbench/taxonomy.py)),
 so every gold label is traceable to peer-reviewed work.
 
 ## Scoring (see [SPEC §4](SPEC.md#4-scoring-rubric))
@@ -50,7 +52,7 @@ so every gold label is traceable to peer-reviewed work.
    Error axes from [Trust-Align](https://arxiv.org/abs/2409.11242): Inaccurate Answer ·
    Over-Responsiveness · Excessive Refusal · Overcitation · Improper Citation.
 
-For every correct refusal, the report shows RAGAS `faithfulness → NaN` next to cite-or-abstain
+For every correct refusal, the report shows RAGAS `faithfulness → NaN` next to ProvenanceBench
 `→ pass`. That contrast is the point.
 
 ## Run

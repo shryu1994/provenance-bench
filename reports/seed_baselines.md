@@ -1,4 +1,4 @@
-# cite-or-abstain — seed baseline run
+# ProvenanceBench — seed baseline run
 
 corpus: aurora_qms (9 spans) · evalset: seed (13 cases) · model-free (Tier-1 + Tier-3)
 

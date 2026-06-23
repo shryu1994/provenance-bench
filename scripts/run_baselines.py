@@ -9,9 +9,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from coa.baselines import build_grounded, build_naive
-from coa.data import load_cases
-from coa.runner import render, run
+from provbench.baselines import build_grounded, build_naive
+from provbench.data import load_cases
+from provbench.runner import render, run
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -24,7 +24,7 @@ def main() -> None:
     ]
     out = "\n\n".join(render(r) for r in reports)
     header = (
-        "# cite-or-abstain — seed baseline run\n\n"
+        "# ProvenanceBench — seed baseline run\n\n"
         f"corpus: aurora_qms ({len(spans)} spans) · evalset: seed ({len(cases)} cases) · "
         "model-free (Tier-1 + Tier-3)\n\n"
         "Honest read:\n"

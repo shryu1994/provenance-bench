@@ -9,9 +9,9 @@ from __future__ import annotations
 
 import pytest
 
-from coa.data import load_cases
-from coa.taxonomy import BY_KEY
-from coa.types import ResponseKind
+from provbench.data import load_cases
+from provbench.taxonomy import BY_KEY
+from provbench.types import ResponseKind
 
 
 def test_seed_loads_and_validates():

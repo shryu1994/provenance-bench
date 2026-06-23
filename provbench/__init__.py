@@ -1,4 +1,4 @@
-"""cite-or-abstain — a faithfulness + justified-abstention benchmark for regulated docs.
+"""ProvenanceBench — a faithfulness + justified-abstention benchmark for regulated docs.
 
 A correct "I don't know" is scored as a first-class pass — and credited only when the system
 abstains for the right reason. See SPEC.md for the full design and prior-art grounding.

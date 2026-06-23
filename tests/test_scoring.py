@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from coa.baselines import build_grounded, build_naive
-from coa.data import load_cases
-from coa.runner import run
+from provbench.baselines import build_grounded, build_naive
+from provbench.data import load_cases
+from provbench.runner import run
 
 
 def _metrics(build):
