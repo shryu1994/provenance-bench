@@ -7,7 +7,10 @@ Fully offline (no API key). Writes reports/seed_baselines.md.
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # run from a fresh clone, no install needed
 
 from provbench.baselines import build_grounded, build_naive
 from provbench.data import load_cases

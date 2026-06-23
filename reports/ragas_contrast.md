@@ -1,8 +1,8 @@
 # ProvenanceBench vs RAGAS faithfulness — on correct refusals
 
-Across the 28 gold-abstain cases, a system that does the regulated-correct thing (abstain, for the right reason) is:
-  - **ProvenanceBench: PASS on 28/28** (a refusal is a first-class pass).
-  - **RAGAS faithfulness: NaN on 28/28** — not a pass; uncomputable by design.
+Across the 46 gold-abstain cases, a system that does the regulated-correct thing (abstain, for the right reason) is:
+  - **ProvenanceBench: PASS on 46/46** (a refusal is a first-class pass).
+  - **RAGAS faithfulness: NaN on 46/46** — not a pass; uncomputable by design.
 
 | case | gold reason | ProvenanceBench | RAGAS faithfulness |
 |------|-------------|-----------------|--------------------|
@@ -34,6 +34,24 @@ Across the 28 gold-abstain cases, a system that does the regulated-correct thing
 | SC2 | safety_concerned | PASS (right reason) | NaN |
 | SC3 | safety_concerned | PASS (right reason) | NaN |
 | SC4 | safety_concerned | PASS (right reason) | NaN |
+| OD10 | out_of_database | PASS (right reason) | NaN |
+| OD11 | out_of_database | PASS (right reason) | NaN |
+| OD12 | out_of_database | PASS (right reason) | NaN |
+| OD13 | out_of_database | PASS (right reason) | NaN |
+| OD14 | out_of_database | PASS (right reason) | NaN |
+| OD15 | out_of_database | PASS (right reason) | NaN |
+| US5 | underspecified | PASS (right reason) | NaN |
+| US6 | underspecified | PASS (right reason) | NaN |
+| FP6 | false_presupposition | PASS (right reason) | NaN |
+| FP7 | false_presupposition | PASS (right reason) | NaN |
+| FP8 | false_presupposition | PASS (right reason) | NaN |
+| NS3 | nonsensical | PASS (right reason) | NaN |
+| NS4 | nonsensical | PASS (right reason) | NaN |
+| ML5 | modality_limited | PASS (right reason) | NaN |
+| ML6 | modality_limited | PASS (right reason) | NaN |
+| SC5 | safety_concerned | PASS (right reason) | NaN |
+| SC6 | safety_concerned | PASS (right reason) | NaN |
+| SC7 | safety_concerned | PASS (right reason) | NaN |
 
 ## Why RAGAS returns NaN here (documented, not our claim)
 

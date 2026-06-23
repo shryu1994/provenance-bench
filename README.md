@@ -6,18 +6,22 @@
 A correct *"I don't know"* is scored as a first-class **pass** — and credited only when the
 system abstains *for the right reason*.
 
-> Status: **v0, work in progress.** This is the scaffold + design ([SPEC.md](SPEC.md)) and a
-> seed evalset. The corpus and case set are small on purpose; expansion and a first honest run
-> on public models come next ([SPEC §8](SPEC.md#8-build-sequence)).
+> Status: **v0.2, work in progress.** A 72-case seed evalset on an 18-span synthetic regulated
+> corpus, with offline reference baselines **and** two real models run (Claude Haiku & Sonnet, via
+> the Claude Code subscription — see [`reports/`](reports/)). Small and synthetic on purpose; the
+> method is the point, not the data ([SPEC.md](SPEC.md)).
 
 ## Why
 
-In regulated work — the kind of documentation where a confident wrong answer is a compliance
-event, not a demo bug — refusing when the documents don't support an answer is the *correct*,
-*required* behaviour. But the default RAG metric punishes it: RAGAS `faithfulness` returns
-`NaN`, not a pass, for a correct refusal — *by design*
+I build AI over compliance and quality-management documentation. In that work a confident wrong
+answer isn't a demo bug — it's a compliance event. So when the documents don't support an answer,
+the system has to refuse: *"I don't know"* is the **required** output, not a failure.
+
+But the default RAG metric punishes exactly that. RAGAS `faithfulness` returns `NaN`, not a pass,
+for a correct refusal — *by design*
 ([issue #794](https://github.com/explodinggradients/ragas/issues/794): *"This is intentional …
-therefore it's NaN"*).
+therefore it's NaN"*). The one behaviour my work most depends on is invisible to the standard
+metric. ProvenanceBench is the measure I went looking for and couldn't find.
 
 Refusal/abstention benchmarks now exist — [AbstentionBench](https://github.com/facebookresearch/AbstentionBench)
 (abstention scored as correct), [UAEval4RAG](https://arxiv.org/abs/2412.12300) (six unanswerable
@@ -60,16 +64,52 @@ so every gold label is traceable to peer-reviewed work.
 For every correct refusal, the report shows RAGAS `faithfulness → NaN` next to ProvenanceBench
 `→ pass`. That contrast is the point.
 
-## Run
+## Run it (no install, no API key)
 
 ```bash
-pip install -e ".[dev]"
-pytest            # validates the seed evalset is internally sound (every gold label traceable)
+make demo          # or: python3 scripts/run_baselines.py
 ```
 
-The benchmark eats its own dog food: a gold citation that points nowhere, or an abstain case
-with no real reason category, fails at load time. A benchmark about unsupported claims won't
-ship unsupported gold labels.
+Runs the offline reference baselines on all 72 seed cases and prints a scored report. Real output (trimmed):
+
+```text
+# naive (always answers)
+  overall correct:      0.292   <- un-gameable headline: right behaviour on all 72 items
+  joint score (.7/.3):  0.70    <- the conventional score -- but a system that NEVER abstains wins it
+  abstention recall:    0.0     <- never abstains, so misses every unanswerable case
+
+# grounded (cite-or-refuse method)
+  overall correct:      0.667   <- un-gameable headline
+  abstention recall:    0.913   <- abstains when it should...
+  right-reason rate:    0.283   <- ...but names the *right* reason only ~28% of the time
+  excessive refusal:    0.81    <- and over-refuses naturally-phrased answerable questions
+
+  per case (excerpt):
+    PASS OD1   abstain:out_of_database       -> abstain:out_of_database  ✓reason
+    PASS FP2   abstain:false_presupposition  -> abstain:out_of_database  ✗reason  [Improper Citation] reason != gold
+    FAIL A5    answer                        -> abstain                  [Excessive Refusal] refused an answerable question
+```
+
+The naive "always answer" baseline **wins the conventional joint score (0.70)** while doing the right thing on
+only **0.292** of items — which is exactly why the headline is the un-gameable `overall_correct`, not the joint.
+*A benchmark about knowing when to stop can't use a metric you win by never stopping.*
+
+The motivating contrast, on the 46 correct-refusal cases (`make contrast`):
+
+```text
+ProvenanceBench:     PASS on 46/46   -- a justified refusal is a first-class pass
+RAGAS faithfulness:  NaN  on 46/46   -- not a pass; uncomputable by design (issue #794)
+```
+
+### Going further
+
+```bash
+pip install -e ".[dev]" && make test   # validates every gold label is traceable (load-time)
+python3 scripts/run_llm.py             # runs a real LLM via the Claude Code subscription -- no API key
+```
+
+The benchmark eats its own dog food: a gold citation that points nowhere, or an abstain case with no real
+reason category, fails at load time. A benchmark about unsupported claims won't ship unsupported gold labels.
 
 ## Lineage
 

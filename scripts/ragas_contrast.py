@@ -8,7 +8,10 @@ not run ragas live). Writes reports/ragas_contrast.md.
 from __future__ import annotations
 
 import math
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # run from a fresh clone, no install needed
 
 from provbench.contrast import ragas_faithfulness
 from provbench.data import load_cases

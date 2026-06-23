@@ -10,8 +10,11 @@ No API key — uses the logged-in Claude Code subscription via `claude -p`. Writ
 from __future__ import annotations
 
 import os
+import sys
 from collections import defaultdict
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # run from a fresh clone, no install needed
 
 from provbench.baselines.llm import build_llm
 from provbench.data import load_cases
