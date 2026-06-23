@@ -36,7 +36,12 @@ def main() -> None:
         "2. The grounded baseline abstains well (high abstention recall) but reports a single "
         "generic reason, so it passes 'did it abstain?' while largely failing 'for the right "
         "reason?' — a miniature of RefusalBench's finding that refusal *detection* is far easier "
-        "than refusal *categorization*.\n\n---\n\n"
+        "than refusal *categorization*.\n"
+        "3. On the naturally-phrased answerable questions added in v0.1, the grounded baseline now "
+        "*over-refuses* (high excessive-refusal): its conservative undocumented-term gate fires on "
+        "ordinary words the corpus doesn't happen to use. Calibration is hard in BOTH directions — "
+        "naive over-answers, grounded over-refuses — which is exactly why a benchmark must test "
+        "where a behaviour should occur AND where it shouldn't.\n\n---\n\n"
     )
     print(out)
     dest = ROOT / "reports" / "seed_baselines.md"
