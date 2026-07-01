@@ -14,3 +14,7 @@ venv/
 # transient run logs
 reports/.full_run.log
 reports/*.log
+
+# promptfoo bridge — generated configs and run outputs (reproducible: gen_config.py + promptfoo eval)
+promptfoo/*.generated.json
+promptfoo/*.results.json
