@@ -18,9 +18,12 @@ answer isn't a demo bug — it's a compliance event. So when the documents don't
 the system has to refuse: *"I don't know"* is the **required** output, not a failure.
 
 But the default RAG metric punishes exactly that. RAGAS `faithfulness` returns `NaN`, not a pass,
-for a correct refusal — *by design*
+for a correct refusal — *by design*: a refusal makes zero factual claims, so the score is `0/0`,
+undefined. The maintainer confirms this refusal case is intentional
 ([issue #794](https://github.com/explodinggradients/ragas/issues/794): *"This is intentional …
-therefore it's NaN"*). The one behaviour my work most depends on is invisible to the standard
+therefore it's NaN"*). RAGAS also emits the *same* `NaN` when the judge LLM returns unparseable
+output — a separate, bug-class cause — so a bare `NaN` can't by itself tell a principled abstention
+from a broken eval run. The one behaviour my work most depends on is invisible to the standard
 metric. ProvenanceBench is the measure I went looking for and couldn't find.
 
 Refusal/abstention benchmarks now exist — [AbstentionBench](https://github.com/facebookresearch/AbstentionBench)
@@ -98,8 +101,12 @@ The motivating contrast, on the 46 correct-refusal cases (`make contrast`):
 
 ```text
 ProvenanceBench:     PASS on 46/46   -- a justified refusal is a first-class pass
-RAGAS faithfulness:  NaN  on 46/46   -- not a pass; uncomputable by design (issue #794)
+RAGAS faithfulness:  NaN  on 46/46   -- not a pass; 0/0 is undefined (a refusal = zero claims)
 ```
+
+These 46 are the zero-statement refusal case — issue #794's by-design behaviour — verified as
+refusals by construction, not RAGAS's separate parse-failure `NaN`. (`make contrast` reproduces
+RAGAS's documented code path; it does not run ragas live.)
 
 ### Going further
 
